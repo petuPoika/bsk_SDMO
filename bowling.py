@@ -1,3 +1,5 @@
+from boltons.iterutils import strip
+
 from bowling_error import BowlingError
 from frame import Frame
 
@@ -20,12 +22,21 @@ class BowlingGame:
     def calculate_score(self) -> int:
         score = 0
         is_spare = False
+        is_strike = False
         for frame in self.frames:
+            if is_strike:
+                score = score + frame.get_first_throw() + frame.get_second_throw()
+                is_strike = False
+
             if is_spare:
                 score = score + frame.get_first_throw()
                 is_spare = False
+
             if frame.is_spare():
                 is_spare = True
+
+            if frame.is_strike():
+                is_strike = True
 
             score = score + frame.score()
         return score
